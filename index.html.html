@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>房地产基础知识 · Real Estate Fundamentals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16233F;
+    --navy-2:#22335A;
+    --paper:#F7F4EA;
+    --card:#FFFFFF;
+    --brass:#B08D2B;
+    --brass-dark:#8A6D1E;
+    --line:#E4DFCE;
+    --muted:#5B6478;
+    --ink:#1B2436;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--navy);
+    color:var(--ink);
+    font-family:'Inter','Noto Sans SC',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.lang-zh .lang-en{display:none;}
+  body.lang-en .lang-zh{display:none;}
+
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--paper);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- APP BAR ---------- */
+  .appbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:linear-gradient(180deg,var(--navy) 0%, var(--navy-2) 100%);
+    color:#F3EFE2;
+    padding:14px 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border-bottom:2px solid var(--brass);
+  }
+  .icon-btn{
+    width:38px;height:38px;flex:0 0 auto;
+    border-radius:999px;
+    border:none;
+    background:transparent;
+    color:#F3EFE2;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    touch-action:manipulation;
+  }
+  .icon-btn:active{background:rgba(255,255,255,0.12);}
+  .icon-btn svg{width:20px;height:20px;}
+  .appbar-title{flex:1 1 auto;min-width:0;}
+  .at-eyebrow{
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--brass);
+    font-weight:600;
+    margin:0 0 1px;
+  }
+  .at-title{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:17px;
+    margin:0;
+    color:#FBF9F2;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .lang-toggle{
+    display:flex;
+    border:1px solid rgba(255,255,255,0.22);
+    border-radius:8px;
+    overflow:hidden;
+    flex:0 0 auto;
+  }
+  .lang-toggle button{
+    border:none;
+    background:transparent;
+    color:#C7CEE2;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 10px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .lang-toggle button.active{background:var(--brass);color:#241C08;}
+
+  /* ---------- SCREENS ---------- */
+  .screen{
+    flex:1 1 auto;
+    padding:16px 16px 24px;
+  }
+  .home-sub{
+    font-size:13px;
+    color:var(--muted);
+    margin:0 0 16px;
+    line-height:1.6;
+  }
+
+  .cat-list{display:flex;flex-direction:column;gap:10px;}
+  .cat-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:13px 14px;
+    text-align:left;
+    cursor:pointer;
+    font-family:inherit;
+    touch-action:manipulation;
+  }
+  .cat-row:active{border-color:var(--brass);}
+  .cat-stamp{
+    width:38px;height:38px;flex:0 0 auto;
+    border-radius:50%;
+    border:2px dashed var(--brass);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Spectral',serif;
+    font-weight:700;
+    font-size:13px;
+    color:var(--brass-dark);
+    background:#fff;
+  }
+  .cat-row-body{flex:1 1 auto;min-width:0;}
+  .cat-row-title{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--ink);
+    margin:0 0 2px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .cat-row-count{font-size:12px;color:var(--muted);margin:0;}
+  .cat-row-chev{flex:0 0 auto;color:var(--brass-dark);width:18px;height:18px;}
+
+  /* ---------- TERM ACCORDION (detail screen) ---------- */
+  .term-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:10px;
+    transition:border-color .15s;
+  }
+  .term-card.open{border-color:var(--brass);}
+  .term-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:14px 16px;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    font-family:inherit;
+    touch-action:manipulation;
+  }
+  .term-btn .term{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:15.5px;
+    color:var(--navy);
+    margin:0;
+  }
+  body.lang-zh .term-btn .term{font-family:'Noto Sans SC','Inter',sans-serif;}
+  .chevron{flex:0 0 auto;width:18px;height:18px;color:var(--brass-dark);transition:transform .2s;}
+  .term-card.open .chevron{transform:rotate(180deg);}
+  .def-wrap{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .term-card.open .def-wrap{max-height:600px;}
+  .def-inner{padding:0 16px 16px;}
+  .def-inner .def{
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--ink);
+    margin:0;
+    border-top:1px solid var(--line);
+    padding-top:12px;
+  }
+  body.lang-zh .def-inner .def{font-family:'Noto Sans SC','Inter',sans-serif;}
+
+  .detail-lead{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .detail-lead .cat-stamp{width:44px;height:44px;font-size:15px;}
+  .detail-lead h2{
+    font-family:'Spectral',serif;
+    font-weight:600;
+    font-size:18px;
+    margin:0;
+    color:var(--ink);
+  }
+  .detail-lead p{font-size:12px;color:var(--muted);margin:2px 0 0;}
+
+  /* ---------- PAGER ---------- */
+  .pager{
+    position:sticky;
+    bottom:0;
+    z-index:15;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    background:var(--card);
+    border-top:1px solid var(--line);
+    padding:10px 12px;
+  }
+  .pager-btn{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:9px 12px;
+    font-size:13px;
+    color:var(--ink);
+    cursor:pointer;
+    font-family:inherit;
+    touch-action:manipulation;
+  }
+  .pager-btn:disabled{opacity:.35;cursor:default;}
+  .pager-btn svg{width:15px;height:15px;}
+  .pager-count{
+    font-size:12px;
+    color:var(--muted);
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- SEARCH OVERLAY ---------- */
+  .search-overlay{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    max-width:480px;
+    margin:0 auto;
+  }
+  .search-bar{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:12px;
+    background:linear-gradient(180deg,var(--navy) 0%, var(--navy-2) 100%);
+    border-bottom:2px solid var(--brass);
+  }
+  .search-bar input{
+    flex:1 1 auto;
+    height:42px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.2);
+    background:rgba(255,255,255,0.09);
+    color:#FBF9F2;
+    padding:0 12px;
+    font-size:16px;
+    font-family:inherit;
+    outline:none;
+  }
+  .search-bar input::placeholder{color:#9AA3BC;}
+  .search-results{flex:1 1 auto;overflow-y:auto;padding:12px 16px;}
+  .sr-item{
+    width:100%;
+    text-align:left;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:8px;
+    cursor:pointer;
+    font-family:inherit;
+    touch-action:manipulation;
+  }
+  .sr-cat{font-size:11px;color:var(--brass-dark);font-weight:600;margin:0 0 3px;text-transform:uppercase;letter-spacing:.03em;}
+  .sr-term{font-family:'Spectral',serif;font-weight:600;font-size:14.5px;color:var(--ink);margin:0 0 3px;}
+  body.lang-zh .sr-term{font-family:'Noto Sans SC','Inter',sans-serif;}
+  .sr-def{font-size:12.5px;color:var(--muted);margin:0;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .sr-empty{text-align:center;color:var(--muted);font-size:13px;padding:40px 20px;}
+
+  footer{
+    text-align:center;
+    padding:16px;
+    font-size:11px;
+    color:var(--muted);
+  }
+</style>
+</head>
+<body class="lang-zh">
+
+<div class="app">
+  <div class="appbar">
+    <button id="backBtn" class="icon-btn" aria-label="back" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="appbar-title">
+      <p class="at-eyebrow">FLP Realty</p>
+      <h1 class="at-title" id="atTitle">
+        <span class="lang-zh">房地产基础知识</span>
+        <span class="lang-en">Real Estate Fundamentals</span>
+      </h1>
+    </div>
+    <button id="searchBtn" class="icon-btn" aria-label="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <div class="lang-toggle">
+      <button id="btnZh" class="active">中</button>
+      <button id="btnEn">EN</button>
+    </div>
+  </div>
+
+  <div id="homeScreen" class="screen">
+    <p class="home-sub lang-zh">团队内部速查手册 · 点击分类查看术语解释</p>
+    <p class="home-sub lang-en">Internal quick reference — tap a category to view terms</p>
+    <div class="cat-list" id="catList"></div>
+  </div>
+
+  <div id="detailScreen" class="screen" style="display:none">
+    <div class="detail-lead">
+      <div class="cat-stamp" id="detailStamp">01</div>
+      <div>
+        <h2 id="detailTitle"></h2>
+        <p id="detailCount"></p>
+      </div>
+    </div>
+    <div id="detailCards"></div>
+  </div>
+
+  <div id="pager" class="pager" style="display:none">
+    <button id="prevBtn" class="pager-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      <span class="lang-zh">上一类</span><span class="lang-en">Prev</span>
+    </button>
+    <span class="pager-count" id="pagerCount">01 / 10</span>
+    <button id="nextBtn" class="pager-btn">
+      <span class="lang-zh">下一类</span><span class="lang-en">Next</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <footer>
+    <span class="lang-zh">FLP Realty 团队内部资料 · 仅供团队学习使用</span>
+    <span class="lang-en">FLP Realty internal material — for team training use only</span>
+  </footer>
+</div>
+
+<div id="searchOverlay" class="search-overlay" style="display:none">
+  <div class="search-bar">
+    <button id="searchCloseBtn" class="icon-btn" aria-label="close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <input id="searchInput" type="text" placeholder="搜索术语…">
+  </div>
+  <div id="searchResults" class="search-results"></div>
+</div>
+
+<script>
+const categories = [
+{id:"basics", num:"01", zh:"房地产基础知识", en:"Real Estate Fundamentals", items:[
+  {zh:"Freehold 永久产权", en:"Freehold",
+   zhDef:"永久产权，买家对土地拥有无限期所有权，除非国家有特殊法令，否则不会到期。",
+   enDef:"Ownership of the land is permanent with no expiry; the buyer holds the title indefinitely, subject to state laws."},
+  {zh:"Leasehold 租赁产权", en:"Leasehold",
+   zhDef:"政府将土地以固定年限（通常99年，少数为60年或999年）租给业主，届满后需申请续期，否则土地归还州政府。",
+   enDef:"The state leases the land for a fixed term, commonly 99 years (occasionally 60 or 999 years); the title reverts to the state upon expiry unless renewed."},
+  {zh:"Residential / Commercial 住宅 / 商用", en:"Residential vs Commercial",
+   zhDef:"住宅地契仅限居住用途；商用地契可作商业用途，门牌税（Assessment）通常更高，银行贷款成数也不同。",
+   enDef:"Residential title restricts use to dwelling purposes; commercial title allows business use and usually carries higher assessment tax and different loan margins."},
+  {zh:"Strata Title 分层地契 / Individual Title 个别地契", en:"Strata Title vs Individual Title",
+   zhDef:"分层地契适用于公寓等分层建筑单位，业主共享公共设施；个别地契则用于有独立地段的有地住宅。",
+   enDef:"Strata title applies to units within a subdivided building (condos, apartments) where owners share common property; individual title applies to landed properties with a standalone lot."},
+  {zh:"Bumiputera Lot 土著地段", en:"Bumiputera Lot",
+   zhDef:"法律规定保留给土著购买的单位，通常有折扣价；转售给非土著须向州政府申请解禁（release），过程可能繁琐。",
+   enDef:"A unit reserved by law for Bumiputera buyers, usually sold at a discount; resale to non-Bumiputera requires a state authority release, which can be difficult and time-consuming."},
+  {zh:"International Lot 国际地段", en:"International Lot",
+   zhDef:"不受土著固打限制的单位，任何买家包括外国人都可购买（外国人购买需符合最低门槛价）。",
+   enDef:"A unit not restricted by Bumiputera quota, open to all buyers including foreigners, subject to minimum price thresholds for foreign ownership."},
+  {zh:"土地面积换算 sqft / sqm", en:"Area Conversion (sqft / sqm)",
+   zhDef:"1平方米（sqm）= 10.764平方尺（sqft）。马来西亚房产多用sqft标示，与新加坡/中国客户沟通时常需换算。",
+   enDef:"1 square metre (sqm) = 10.764 square feet (sqft). Malaysian listings mostly use sqft; conversion matters with Singapore/China buyers who use sqm."},
+  {zh:"Built-up vs Land Size 建筑面积 vs 地皮面积", en:"Built-up vs Land Size",
+   zhDef:"建筑面积（Built-up）指实际建筑楼面面积；地皮面积（Land Size）指土地本身大小，主要用于有地住宅估价。",
+   enDef:"Built-up area is the actual constructed floor area; land size is the size of the plot itself, relevant mainly for landed properties."},
+  {zh:"Dual Key 双钥匙单位", en:"Dual Key",
+   zhDef:"一个地契内分隔成两个独立空间，各自有独立门户，适合三代同堂或「自住+出租」双重用途。",
+   enDef:"A single title unit split into two separate living spaces with independent entrances, ideal for extended families or dual live-and-rent use."},
+  {zh:"SOHO / SOVO / Serviced Apartment", en:"SOHO / SOVO / Serviced Apartment",
+   zhDef:"SOHO（小型家居办公室）可住宅兼办公用途；SOVO为商用地契，只能办公不可居住；服务式公寓属住宅地契，以酒店式管理，多作投资出租。",
+   enDef:"SOHO allows mixed residential-office use; SOVO is commercial-titled, office-only, no residential use permitted; Serviced Apartments are residential-titled but hotel-style managed, often bought for rental income."}
+]},
+{id:"process", num:"02", zh:"买房流程", en:"Purchase Process", items:[
+  {zh:"Booking 订购", en:"Booking",
+   zhDef:"买家支付订金（通常RM1,000–RM5,000或房价的1–3%）以锁定单位与价格，之后才签署买卖合约（SPA）。",
+   enDef:"The buyer pays a booking fee (typically RM1,000–RM5,000 or 1–3% of price) to reserve the unit and lock in the price before signing the SPA."},
+  {zh:"Loan 申请", en:"Loan Application",
+   zhDef:"买家提交收入证明、CCRIS/CTOS报告及申请表格给银行，银行批准（Letter of Offer）通常需2–4周。",
+   enDef:"The buyer submits income documents, CCRIS/CTOS reports and application forms to banks; approval (Letter of Offer) usually takes 2–4 weeks."},
+  {zh:"SPA 买卖合约", en:"SPA (Sale and Purchase Agreement)",
+   zhDef:"买卖合约，买卖双方的法律合约，通常在订购后14–30天内签署，随后需支付10%头期款（扣除已付订金）。",
+   enDef:"The core legal contract binding buyer and seller/developer, signed within 14–30 days of booking, followed by the 10% down payment (minus booking fee)."},
+  {zh:"Loan Agreement 贷款合约", en:"Loan Agreement",
+   zhDef:"贷款批准后与银行签署的正式合约，盖印生效后，银行开始按进度向发展商放款。",
+   enDef:"The formal contract with the bank after loan approval, stamped and signed, which triggers the bank to start releasing progressive payments."},
+  {zh:"Progressive Payment 分阶段付款", en:"Progressive Payment",
+   zhDef:"针对新项目（建筑中），根据SPA附表H/G的建筑进度（如打桩、结构、屋顶等阶段）分阶段付款。",
+   enDef:"For new projects under construction, payments are released in stages per Schedule H/G of the SPA, matching construction progress."},
+  {zh:"Vacant Possession (VP) 空屋交接", en:"Vacant Possession (VP)",
+   zhDef:"发展商将完工单位交给买家的阶段，公寓通常约3年，有地住宅约2–2.5年；须缴清该阶段所有款项才能拿钥匙。",
+   enDef:"The developer hands over the completed unit, typically 3 years (condo) or 2–2.5 years (landed) after SPA signing, once all payments are settled."},
+  {zh:"Defect Check 验收 / 瑕疵检查", en:"Defect Check",
+   zhDef:"在瑕疵责任期内（一般为交房后24个月），买家检查单位并列出瑕疵（裂缝、漏水、设备故障），由发展商免费修复。",
+   enDef:"Within the Defect Liability Period (usually 24 months after VP), the buyer reports defects for the developer to fix at no cost."},
+  {zh:"拿钥匙 Key Collection", en:"Key Collection",
+   zhDef:"完成交房及瑕疵检查/修复后的最后步骤，买家领取钥匙，即可入住或出租单位。",
+   enDef:"The final handover step after VP and defect rectification — the buyer collects keys and can move in or rent out the unit."}
+]},
+{id:"loan", num:"03", zh:"银行贷款知识", en:"Bank Loan Knowledge", items:[
+  {zh:"DSR 债务偿还比率", en:"DSR (Debt Service Ratio)",
+   zhDef:"每月总负债（现有贷款+新贷款供期）占月总收入的比例；银行一般要求DSR低于60–70%才批准贷款。",
+   enDef:"Ratio of total monthly debt commitments to gross monthly income; banks typically require DSR below 60–70% for approval."},
+  {zh:"Loan Margin 贷款成数", en:"Loan Margin",
+   zhDef:"银行愿意贷出的房价百分比（如90%成数即买家只需付10%头期）；成数依产业类型、价格及信用状况而异。",
+   enDef:"The percentage of the property price the bank is willing to finance; margin varies by property type, price and the buyer's credit profile."},
+  {zh:"Lock-in Period 锁定期", en:"Lock-in Period",
+   zhDef:"通常为3–5年的期限，在此期间提前还清贷款或转贷会被罚款（一般为未偿还贷款额的2–3%）。",
+   enDef:"A period (commonly 3–5 years) during which early settlement or refinancing incurs a penalty, usually 2–3% of the outstanding loan."},
+  {zh:"Interest Rate / OPR 利率 / 隔夜政策利率", en:"Interest Rate / OPR",
+   zhDef:"马来西亚房贷多为浮动利率，以银行的SRR/BR加码计算；SRR会随国家银行（BNM）的隔夜政策利率（OPR）调整而变动。",
+   enDef:"Most Malaysian home loans use a floating rate pegged to the bank's SRR/BR, which moves with Bank Negara Malaysia's OPR decisions."},
+  {zh:"CCRIS 中央信贷资讯系统", en:"CCRIS",
+   zhDef:"由国家银行管理的信贷报告，记录个人在所有银行的贷款与还款记录，银行以此评估申请人信用状况。",
+   enDef:"A credit report by Bank Negara Malaysia showing a person's full loan and repayment history across all banks, used to assess creditworthiness."},
+  {zh:"CTOS 私营信贷机构", en:"CTOS",
+   zhDef:"马来西亚私营信贷报告机构；即使CCRIS记录良好，若CTOS评分不佳（欠费、传票、破产记录）仍可能影响贷款审批。",
+   enDef:"A private credit reporting agency; a poor CTOS score from unpaid bills, summons or bankruptcy records can affect loan approval even with clean CCRIS."},
+  {zh:"Joint Loan 联名贷款", en:"Joint Loan",
+   zhDef:"两名或以上借款人（如夫妻、父母子女）共同申请，合并收入以提高贷款额度；所有借款人须共同承担全部贷款责任。",
+   enDef:"Two or more borrowers apply together, combining incomes to increase eligibility; all parties are jointly liable for the full loan."},
+  {zh:"Refinancing 转贷", en:"Refinancing",
+   zhDef:"以新贷款（通常来自另一间银行）取代现有贷款，目的多为获取更低利率、套现或调整还款方式；提早办理会有锁定期罚款。",
+   enDef:"Taking a new loan, often from a different bank, to replace an existing one for a better rate or cash-out — subject to lock-in penalties if done early."},
+  {zh:"MRTA / MLTA", en:"MRTA / MLTA",
+   zhDef:"MRTA为一次性缴费保险，保额随贷款余额递减，用以偿还身故/残疾时的剩余贷款；MLTA保额维持不变，较灵活且可转让。",
+   enDef:"MRTA is a one-time-premium insurance with a decreasing payout as the loan reduces; MLTA keeps the coverage level and is more flexible/transferable."}
+]},
+{id:"costs", num:"04", zh:"买房费用", en:"Purchase Costs", items:[
+  {zh:"Booking Fee 订金", en:"Booking Fee",
+   zhDef:"订购单位时支付的订金（RM1,000–RM5,000或房价的1–3%），日后会从10%头期款中扣除。",
+   enDef:"Initial deposit paid to reserve a unit before SPA signing; usually deducted from the 10% down payment later."},
+  {zh:"SPA Legal Fee SPA律师费", en:"SPA Legal Fee",
+   zhDef:"买卖合约律师费，按房价分级收费（首RM500,000约1%，之后递减）；新项目促销时常由发展商代付/豁免。",
+   enDef:"Fee for preparing the Sale and Purchase Agreement, tiered by property price; often waived in new project promotions."},
+  {zh:"Loan Legal Fee 贷款律师费", en:"Loan Legal Fee",
+   zhDef:"贷款合约律师费，按贷款额分级收费，计算方式与SPA律师费相似；同样常被纳入发展商促销配套。",
+   enDef:"Fee for preparing the loan agreement, tiered by loan amount; also frequently included in developer promotions."},
+  {zh:"Stamp Duty / MOT 印花税 / 转名税", en:"Stamp Duty / MOT",
+   zhDef:"转名备忘录印花税，按房价分级课税（首RM100,000为1%，接下来RM400,000为2%，再RM500,000为3%，超过RM1,000,000为4%）；首购族常有豁免优惠。",
+   enDef:"Memorandum of Transfer stamp duty, tiered on price (1% / 2% / 3% / 4% by bracket); first-time buyers often get exemptions under government schemes."},
+  {zh:"Loan Stamp Duty 贷款印花税", en:"Loan Stamp Duty",
+   zhDef:"贷款合约印花税，通常为贷款额的0.5%（政府不时推出首购族或特定价位的豁免优惠）。",
+   enDef:"Stamp duty on the loan agreement, generally 0.5% of the loan amount, subject to periodic exemptions."},
+  {zh:"Maintenance Fee 管理费", en:"Maintenance Fee",
+   zhDef:"分层地契业主每月按建筑面积每尺费率缴付的管理费，用于公共设施维护、保安与大厦管理。",
+   enDef:"Monthly fee (per sqft rate) charged to strata owners for upkeep of common facilities, security and building management."},
+  {zh:"Sinking Fund 维修基金", en:"Sinking Fund",
+   zhDef:"独立储备基金（通常为管理费的10%），用于长期大型维修与更换（如电梯翻新、外墙粉刷）。",
+   enDef:"A separate reserve fund, usually 10% of the maintenance fee, for major long-term repairs and replacements."},
+  {zh:"Quit Rent 地税", en:"Quit Rent",
+   zhDef:"每年缴给州政府的地税，按土地面积与类别计算；有地及分层住宅业主皆须缴付（分层业主份额通常包含在管理费内）。",
+   enDef:"An annual land tax paid to the state government based on land size and category; applicable to both landed and strata properties."},
+  {zh:"Assessment Tax 门牌税", en:"Assessment Tax",
+   zhDef:"由地方政府（市政局）每年两次征收，按房产估算租值计算，用于垃圾清理、道路维修等地方服务。",
+   enDef:"A local council tax paid twice yearly based on the property's assessed rental value, funding local services."}
+]},
+{id:"project", num:"05", zh:"Project 资料", en:"Project Information", items:[
+  {zh:"Developer 发展商", en:"Developer",
+   zhDef:"发展商的往绩、财务实力及交楼素质与准时度的口碑，直接影响买家信心及银行放贷意愿。",
+   enDef:"Track record, financial strength and reputation for on-time, quality delivery — affects buyer confidence and bank financing willingness."},
+  {zh:"Tenure 地契年限", en:"Tenure",
+   zhDef:"永久或租赁地契（及剩余年限）——影响长期增值潜力、贷款成数及买家资格。",
+   enDef:"Freehold or leasehold (and remaining years) — affects long-term value, loan margin and buyer eligibility."},
+  {zh:"地点 Location", en:"Location",
+   zhDef:"与CIQ/RTS、大道、学校、商场及就业区的距离——是转售价值与租赁需求最关键的因素。",
+   enDef:"Proximity to CIQ/RTS, highways, schools, malls and employment hubs — the single biggest driver of resale value and rental demand."},
+  {zh:"Price 价格", en:"Price",
+   zhDef:"以每尺价与周边同类项目比较，判断是否合理定价、被低估或偏贵。",
+   enDef:"Price per sqft benchmarked against comparable nearby projects to judge fair value."},
+  {zh:"Size 面积", en:"Size",
+   zhDef:"项目提供的单位面积范围，是否符合目标买家群（单身、家庭、投资者）的需求。",
+   enDef:"Range of unit sizes offered and how they match target buyer profiles."},
+  {zh:"Layout 布局", en:"Layout",
+   zhDef:"平面图的空间效率（实用面积 vs 浪费走廊）、采光与通风——买家现场评估的重要因素。",
+   enDef:"Efficiency of the floor plan, natural lighting and ventilation — key factors buyers evaluate on-site."},
+  {zh:"Facilities 设施", en:"Facilities",
+   zhDef:"设施种类与素质（泳池、健身房、保安、共享办公空间），是管理费的合理性依据，也是卖点。",
+   enDef:"Types and quality of facilities that justify maintenance fees and attract tenants/buyers."},
+  {zh:"Nearby Landmark 周边地标", en:"Nearby Landmark",
+   zhDef:"附近知名地标（商场、学校、医院、CIQ等），是经纪可用来快速让买家产生共鸣的卖点。",
+   enDef:"Notable nearby landmarks that agents can use as concrete selling points buyers instantly recognize."},
+  {zh:"Target Buyer 目标客群", en:"Target Buyer",
+   zhDef:"项目主要针对的客群（新加坡投资者、本地换房客、首购族），决定经纪应如何推销及在哪些渠道营销。",
+   enDef:"Who the project is designed for shapes how the agent should pitch and which channels to market on."},
+  {zh:"ROI 投资回报率", en:"ROI",
+   zhDef:"持有期内预期的资本增值加上租金回报的综合表现，是说服客户此项目值得投资的依据。",
+   enDef:"Expected combination of capital appreciation and rental yield over a holding period, used to justify the investment."},
+  {zh:"Rental Market 租赁市场", en:"Rental Market",
+   zhDef:"周边同类型单位目前的租金行情与入住率，用来给买家一个实际的租金收入预期。",
+   enDef:"Current asking rents and occupancy rates for similar nearby units, giving buyers a realistic rental income expectation."},
+  {zh:"Completion Date 交楼日期", en:"Completion Date",
+   zhDef:"预计的交楼（VP）日期，对买家规划贷款供期、搬迁时间或出租时间点非常重要。",
+   enDef:"The expected Vacant Possession date, important for buyers planning loans, moving or rental start dates."}
+]},
+{id:"area", num:"06", zh:"地区知识", en:"Area Knowledge (JB)", items:[
+  {zh:"CIQ 关卡", en:"CIQ",
+   zhDef:"海关、移民与检疫综合大楼，新加坡与新山之间的通关口岸；靠近CIQ是吸引新加坡买家的关键卖点。",
+   enDef:"Customs, Immigration and Quarantine complex — the checkpoint between JB and Singapore; proximity is a major value driver for Singapore-focused buyers."},
+  {zh:"RTS Link 捷运连线", en:"RTS Link",
+   zhDef:"连接新山武吉查嘉与新加坡兀兰北的跨境铁路，预计大幅缩短通勤时间，提升沿线站点周边房产需求。",
+   enDef:"The Rapid Transit System Link connecting Bukit Chagar (JB) to Woodlands North (Singapore), expected to cut commute time and boost nearby demand."},
+  {zh:"新加坡关系 Singapore Connection", en:"Singapore Connection",
+   zhDef:"新山紧邻新加坡，吸引大量新加坡买家前来置产（自住、投资或退休），长堤与RTS是主要往返通道。",
+   enDef:"JB's proximity to Singapore drives strong demand from Singaporean buyers, with the causeway and RTS as key commuting links."},
+  {zh:"High Speed Rail 高铁（历史）", en:"High Speed Rail (History)",
+   zhDef:"曾提出的吉隆坡至新加坡高铁计划，历经延迟后于2021年正式取消；提及时应作历史背景，不应作为现在卖点。",
+   enDef:"A proposed KL–Singapore high-speed rail project, delayed and ultimately cancelled in 2021; useful historical context, not a current selling point."},
+  {zh:"Iskandar Malaysia 依斯干达特区", en:"Iskandar Malaysia",
+   zhDef:"涵盖新山及周边地区的国家级经济特区，旨在吸引制造业、服务业及地产投资，是许多新山项目营销时的宏观框架。",
+   enDef:"A national economic corridor covering JB and surrounding districts, designated to attract investment — the broader branding umbrella for many JB projects."},
+  {zh:"各区域特色 District Highlights", en:"District Highlights",
+   zhDef:"Mount Austin成熟配套完善；Tebrau工业物流枢纽；Bukit Indah受家庭欢迎；Medini为旗舰综合发展区；Permas邻近关卡的成熟社区；Sentosa为邻近市中心的新兴区域。",
+   enDef:"Mount Austin — mature amenities; Tebrau — industrial/logistics hub; Bukit Indah — family-friendly; Medini — flagship mixed-use zone; Permas — near CIQ; Sentosa — up-and-coming near city centre."}
+]},
+{id:"investment", num:"07", zh:"投资分析", en:"Investment Analysis", items:[
+  {zh:"为什么会升值？", en:"Why does it appreciate?",
+   zhDef:"增值通常来自基建升级（RTS、大道）、成熟地区新供应有限、区域规划升级，以及租赁需求上升——应指出具体、可查证的驱动因素。",
+   enDef:"Value typically rises from infrastructure upgrades, limited new supply in mature areas, rezoning and rising rental demand — cite specific, verifiable drivers."},
+  {zh:"为什么租得出去？", en:"Why is it rentable?",
+   zhDef:"可出租性取决于是否靠近就业/交通枢纽、单位面积是否符合租客需求、租金是否具竞争力，以及设施素质。",
+   enDef:"Rentability depends on proximity to jobs/transport, unit size matching tenant demand, competitive rent and facility quality."},
+  {zh:"租金多少？", en:"Rental Rate",
+   zhDef:"应引用周边同类单位近期实际成交/放租价格给出合理租金区间，而非过度乐观的数字。",
+   enDef:"Quote a realistic rental range based on actual recent transactions/listings for comparable nearby units, not aspirational figures."},
+  {zh:"Yield 租金回报率", en:"Yield",
+   zhDef:"毛租金回报率 = (年租金收入 ÷ 房价) × 100%，是比较不同房产收租表现的简单方法。",
+   enDef:"Gross rental yield = (Annual Rental Income ÷ Property Price) × 100% — a simple way to compare income returns."},
+  {zh:"ROI 投资回报率", en:"ROI",
+   zhDef:"更全面的回报指标，将持有期内租金收入与资本增值相对于总投资额综合计算，比单看回报率更完整。",
+   enDef:"A broader measure combining rental income and capital appreciation over the holding period relative to total investment."},
+  {zh:"Exit Strategy 退场策略", en:"Exit Strategy",
+   zhDef:"投资者变现的明确计划——交楼后转售套利、长期持有收租，或在转售期内短期套利——应在初期与投资型客户讨论清楚。",
+   enDef:"A clear plan for how and when the investor realises gains — sell after completion, hold for rental income, or flip during sub-sale."}
+]},
+{id:"legal", num:"08", zh:"法律知识", en:"Legal Knowledge", items:[
+  {zh:"SPA 买卖合约", en:"SPA",
+   zhDef:"买卖合约，交易的核心法律合约（详见「买房流程」）。",
+   enDef:"Sale and Purchase Agreement — the core legal contract of the transaction (see Purchase Process)."},
+  {zh:"SNP", en:"SNP",
+   zhDef:"常与SPA交替使用的说法，在次售交易中有时也指提名/转售相关安排——使用时应向客户厘清具体所指的合约。",
+   enDef:"Sometimes used interchangeably with SPA, or referring to nominee/resale arrangements in sub-sale contexts — always clarify with the client."},
+  {zh:"MOT 转名备忘录", en:"MOT",
+   zhDef:"转名备忘录，正式将地契从卖方转到买方名下的法律文件，需在地政局注册。",
+   enDef:"Memorandum of Transfer — the legal document that formally transfers ownership from seller to buyer, registered with the land office."},
+  {zh:"APDL", en:"APDL",
+   zhDef:"业内对发展商配套中特定折扣或批文文件的简称，各发展商用法略有不同——建议以该项目销售手册中的实际定义为准。",
+   enDef:"Industry shorthand for developer-linked discount/approval documents — usage varies by developer, always confirm with the project's sales kit."},
+  {zh:"LAD 迟交罚款", en:"LAD",
+   zhDef:"累计违约赔偿金，发展商若逾期交楼（超过SPA订明日期），须按房价年利10%按日计算赔偿买家。",
+   enDef:"Liquidated and Ascertained Damages — compensation the developer pays for late VP, calculated daily at 10% per annum of the purchase price."},
+  {zh:"Defect Liability Period (DLP) 瑕疵责任期", en:"Defect Liability Period (DLP)",
+   zhDef:"通常为交房（VP）后24个月的期限，期内发展商须免费修复买家反映的瑕疵。",
+   enDef:"Typically 24 months from VP, during which the developer must fix reported defects at no cost."},
+  {zh:"CCC 建筑完工证书", en:"CCC",
+   zhDef:"建筑完工与合格证书，确认建筑物符合批准图纸与安全标准，是合法交楼（VP）前的必要文件。",
+   enDef:"Certificate of Completion and Compliance — confirms the building meets approved plans and safety standards, required before VP."},
+  {zh:"VP 空屋交接", en:"VP",
+   zhDef:"空屋交接，详见「买房流程」，即发展商将完工单位正式交给买家。",
+   enDef:"Vacant Possession — legal handover of the completed unit to the buyer (see Purchase Process)."}
+]},
+{id:"sales", num:"09", zh:"销售能力", en:"Sales Skills", items:[
+  {zh:"Discovery 了解客户需求", en:"Discovery",
+   zhDef:"通过开放式提问了解客户真正的购买动机（自住、投资、换房、退休），先了解需求再推荐项目。",
+   enDef:"Ask open questions to uncover the client's real motivations before pitching any project — need first, pitch second."},
+  {zh:"Qualification 预算与贷款能力评估", en:"Qualification",
+   zhDef:"及早确认客户的预算、头期款准备程度及大致贷款资格（收入、DSR、CCRIS/CTOS），避免浪费时间在不切实际的选项。",
+   enDef:"Confirm the client's budget, down payment readiness and rough loan eligibility early, so time is spent on realistic options."},
+  {zh:"Presentation 项目介绍", en:"Presentation",
+   zhDef:"根据Discovery阶段了解的客户需求重点介绍项目，而非机械式讲解所有卖点。",
+   enDef:"Present the project focused on what matters to this specific client, not a generic run-through of every feature."},
+  {zh:"Objection Handling 处理异议", en:"Objection Handling",
+   zhDef:"完整聆听客户的顾虑（价格、地点、时机），先认同再以具体事实或替代方案回应，而非直接反驳。",
+   enDef:"Listen fully to the client's concern, acknowledge it, then respond with specific facts or alternatives."},
+  {zh:"Closing 成交", en:"Closing",
+   zhDef:"识别客户的购买信号，并引导客户进入明确的下一步（订购、看房、贷款预审），而非让对话不了了之。",
+   enDef:"Recognise buying signals and guide the client to a clear next step rather than leaving the conversation open-ended."},
+  {zh:"Follow-up 跟进", en:"Follow-up",
+   zhDef:"每次互动后都要有系统、及时的跟进——大多数成交都发生在多次接触之后，而非第一次见面。",
+   enDef:"Systematic, timely follow-up after every interaction — most sales close after several touchpoints, not the first meeting."}
+]},
+{id:"market", num:"10", zh:"市场资讯", en:"Market Intelligence", items:[
+  {zh:"OPR 变化", en:"OPR Changes",
+   zhDef:"国家银行的隔夜政策利率（OPR）变动直接影响浮动房贷利率及买家的负担能力——须留意国行货币政策委员会会议公布。",
+   enDef:"Bank Negara Malaysia's Overnight Policy Rate changes directly affect floating home loan rates and buyer affordability."},
+  {zh:"银行贷款政策", en:"Bank Lending Policy",
+   zhDef:"银行不时调整贷款成数、DSR门槛及促销利率——掌握最新情况有助于经纪准确评估客户的贷款可行性。",
+   enDef:"Banks periodically adjust margin of finance, DSR thresholds and promotional rates — staying current helps give accurate advice."},
+  {zh:"新项目 New Launches", en:"New Launches",
+   zhDef:"留意所属区域的新项目推出情况及其定价/定位，既能把握新机会，也能了解竞争供应情况。",
+   enDef:"Track new project launches and their pricing/positioning in your farming area, to spot opportunities and understand competing supply."},
+  {zh:"政府政策 Government Policy", en:"Government Policy",
+   zhDef:"财政预算案、印花税豁免、房屋拥有权运动（HOC）式促销，以及外国人购屋门槛调整，都会影响买家决策。",
+   enDef:"Budget announcements, stamp duty exemptions, HOC-style incentives and foreign ownership threshold changes all shape buyer decisions."},
+  {zh:"房地产新闻 Property News", en:"Property News",
+   zhDef:"关注可信的房产新闻（如The Edge Property、EdgeProp、iProperty市场报告），让市场论述更具说服力与时效性。",
+   enDef:"Following credible property news keeps agents' market commentary credible and current with clients."},
+  {zh:"周边发展 Surrounding Development", en:"Surrounding Development",
+   zhDef:"周边新宣布的基建、商场、学校或工业园区，都可能改变项目的长期价值主张——应按区域持续追踪。",
+   enDef:"New infrastructure, malls, schools or industrial parks announced nearby can shift a project's long-term value — track area by area."}
+]}
+];
+
+
+let currentIndex = 0;
+let currentLang = 'zh';
+
+const homeScreen = document.getElementById('homeScreen');
+const detailScreen = document.getElementById('detailScreen');
+const catList = document.getElementById('catList');
+const detailCards = document.getElementById('detailCards');
+const detailStamp = document.getElementById('detailStamp');
+const detailTitle = document.getElementById('detailTitle');
+const detailCount = document.getElementById('detailCount');
+const atTitle = document.getElementById('atTitle');
+const backBtn = document.getElementById('backBtn');
+const pager = document.getElementById('pager');
+const pagerCount = document.getElementById('pagerCount');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const searchBtn = document.getElementById('searchBtn');
+const searchOverlay = document.getElementById('searchOverlay');
+const searchCloseBtn = document.getElementById('searchCloseBtn');
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+function termCardHTML(it){
+  return `
+    <div class="term-card">
+      <button type="button" class="term-btn">
+        <p class="term"><span class="lang-zh">${it.zh}</span><span class="lang-en">${it.en}</span></p>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="def-wrap">
+        <div class="def-inner">
+          <p class="def"><span class="lang-zh">${it.zhDef}</span><span class="lang-en">${it.enDef}</span></p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function bindAccordions(container){
+  container.querySelectorAll('.term-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.closest('.term-card').classList.toggle('open');
+    });
+  });
+}
+
+function renderHome(){
+  catList.innerHTML = categories.map((cat,i)=>`
+    <button type="button" class="cat-row" data-index="${i}">
+      <div class="cat-stamp">${cat.num}</div>
+      <div class="cat-row-body">
+        <p class="cat-row-title"><span class="lang-zh">${cat.zh}</span><span class="lang-en">${cat.en}</span></p>
+        <p class="cat-row-count">${cat.items.length} <span class="lang-zh">条术语</span><span class="lang-en">terms</span></p>
+      </div>
+      <svg class="cat-row-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>`).join('');
+  catList.querySelectorAll('.cat-row').forEach(row=>{
+    row.addEventListener('click', ()=>openDetail(parseInt(row.dataset.index,10)));
+  });
+}
+
+function openDetail(index, openTermIdx){
+  currentIndex = index;
+  const cat = categories[index];
+  detailStamp.textContent = cat.num;
+  detailTitle.innerHTML = `<span class="lang-zh">${cat.zh}</span><span class="lang-en">${cat.en}</span>`;
+  detailCount.innerHTML = `${cat.items.length} <span class="lang-zh">条术语</span><span class="lang-en">terms</span>`;
+  detailCards.innerHTML = cat.items.map(termCardHTML).join('');
+  bindAccordions(detailCards);
+  if(typeof openTermIdx === 'number'){
+    const card = detailCards.children[openTermIdx];
+    if(card) card.classList.add('open');
+  }
+  homeScreen.style.display = 'none';
+  detailScreen.style.display = 'block';
+  backBtn.style.display = 'flex';
+  pager.style.display = 'flex';
+  atTitle.innerHTML = `<span class="lang-zh">${cat.zh}</span><span class="lang-en">${cat.en}</span>`;
+  pagerCount.textContent = `${cat.num} / ${String(categories.length).padStart(2,'0')}`;
+  prevBtn.disabled = index === 0;
+  nextBtn.disabled = index === categories.length - 1;
+  window.scrollTo({top:0});
+}
+
+function goHome(){
+  homeScreen.style.display = 'block';
+  detailScreen.style.display = 'none';
+  backBtn.style.display = 'none';
+  pager.style.display = 'none';
+  atTitle.innerHTML = `<span class="lang-zh">房地产基础知识</span><span class="lang-en">Real Estate Fundamentals</span>`;
+  window.scrollTo({top:0});
+}
+
+backBtn.addEventListener('click', goHome);
+prevBtn.addEventListener('click', ()=>{ if(currentIndex>0) openDetail(currentIndex-1); });
+nextBtn.addEventListener('click', ()=>{ if(currentIndex<categories.length-1) openDetail(currentIndex+1); });
+
+function setLang(lang){
+  currentLang = lang;
+  document.body.classList.remove('lang-zh','lang-en');
+  document.body.classList.add('lang-'+lang);
+  document.getElementById('btnZh').classList.toggle('active', lang==='zh');
+  document.getElementById('btnEn').classList.toggle('active', lang==='en');
+  searchInput.placeholder = lang==='zh' ? '搜索术语…' : 'Search terms…';
+}
+document.getElementById('btnZh').addEventListener('click', ()=>setLang('zh'));
+document.getElementById('btnEn').addEventListener('click', ()=>setLang('en'));
+
+function openSearch(){
+  searchOverlay.style.display = 'flex';
+  searchInput.value = '';
+  renderSearchResults('');
+  setTimeout(()=>searchInput.focus(), 50);
+}
+function closeSearch(){
+  searchOverlay.style.display = 'none';
+}
+searchBtn.addEventListener('click', openSearch);
+searchCloseBtn.addEventListener('click', closeSearch);
+
+function renderSearchResults(q){
+  q = q.trim().toLowerCase();
+  if(!q){
+    searchResults.innerHTML = `<p class="sr-empty"><span class="lang-zh">输入关键词开始搜索</span><span class="lang-en">Type to search</span></p>`;
+    return;
+  }
+  const results = [];
+  categories.forEach((cat,ci)=>{
+    cat.items.forEach((it,ii)=>{
+      const text = (it.zh+' '+it.en+' '+it.zhDef+' '+it.enDef).toLowerCase();
+      if(text.includes(q)) results.push({cat, ci, ii, it});
+    });
+  });
+  if(results.length===0){
+    searchResults.innerHTML = `<p class="sr-empty"><span class="lang-zh">没有找到相关术语</span><span class="lang-en">No matching terms found</span></p>`;
+    return;
+  }
+  searchResults.innerHTML = results.map(r=>`
+    <button type="button" class="sr-item" data-ci="${r.ci}" data-ii="${r.ii}">
+      <p class="sr-cat"><span class="lang-zh">${r.cat.zh}</span><span class="lang-en">${r.cat.en}</span></p>
+      <p class="sr-term"><span class="lang-zh">${r.it.zh}</span><span class="lang-en">${r.it.en}</span></p>
+      <p class="sr-def"><span class="lang-zh">${r.it.zhDef}</span><span class="lang-en">${r.it.enDef}</span></p>
+    </button>`).join('');
+  searchResults.querySelectorAll('.sr-item').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      closeSearch();
+      openDetail(parseInt(el.dataset.ci,10), parseInt(el.dataset.ii,10));
+      setTimeout(()=>{
+        const card = detailCards.children[parseInt(el.dataset.ii,10)];
+        if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 100);
+    });
+  });
+}
+searchInput.addEventListener('input', ()=>renderSearchResults(searchInput.value));
+
+renderHome();
+</script>
+</body>
+</html>
